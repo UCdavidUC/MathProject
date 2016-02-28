@@ -1,5 +1,6 @@
 package mathproject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,21 +11,21 @@ import java.util.List;
  */
 public class Transition {
     
-    private String estado;
+    private List<Estado> estadosInicio = new ArrayList<>();
+    private List<Estado> estadosLlegada = new ArrayList<>();
     private char simbolo;
-    private List<Estado> estados;
-
+    
     public Transition() {}
-    public Transition(String estado) {
-        this.estado = estado;
+    public Transition(List<Estado> estado) {
+        this.estadosInicio = estado;
     }
     
-    public String getEstado() {
-        return estado;
+    public List<Estado> getEstadosInicio() {
+        return estadosInicio;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setEstadosInicio(List<Estado> estado) {
+        this.estadosInicio = estado;
     }
 
     public char getSimbolo() {
@@ -35,16 +36,43 @@ public class Transition {
         this.simbolo = simbolo;
     }
 
-    public List<Estado> getEstados() {
-        return estados;
+    public List<Estado> getEstadosLlegada() {
+        return estadosLlegada;
     }
 
-    public void setEstados(List<Estado> estados) {
-        this.estados = estados;
+    public void setEstadosLlegada(List<Estado> estadosLlegada) {
+        this.estadosLlegada = estadosLlegada;
     }
     
-    public void addState(Estado estado) {
-        estados.add(estado);
+    public void addEstadoInicio(String estadoInicio) {
+        Estado estado = new Estado();
+        estado.setEstado(estadoInicio);
+        estadosInicio.add(estado);
+    }
+    
+    public void addEstadoLlegada(String estadoLlegada) {
+        Estado estado = new Estado();
+        estado.setEstado(estadoLlegada);
+        estadosLlegada.add(estado);
+    }
+    public void printTransition() {
+        Estado estado = new Estado();
+        for (int i = 0; i < estadosInicio.size(); i++) {
+            estado = estadosInicio.get(i);
+            System.out.print(estado.getEstado() + ",");
+        }
+        System.out.print(simbolo);
+        System.out.print("=>");
+        for (int i = 0; i < estadosLlegada.size(); i++) {
+            if (i < estadosLlegada.size() - 1) {
+                estado = estadosLlegada.get(i);
+                System.out.print(estado.getEstado() + ",");
+            } else {
+                estado = estadosLlegada.get(estadosLlegada.size() - 1);
+                System.out.print(estado.getEstado());
+            }
+        }
+        System.out.println();
     }
     
 }
