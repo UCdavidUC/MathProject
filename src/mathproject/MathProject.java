@@ -73,18 +73,42 @@ public class MathProject {
                         String[] first = descriptor[0].split(",");
                         String[] second = descriptor[1].split(",");
                         Transition transicion = new Transition();
-                        transicion.setEstado(first[0]);
-                        char[] simbolArray = first[1].toCharArray();
-                        simbolo = simbolArray[0];
+                        if (first.length > 2) {
+                            for (int i = 0; i < first.length - 1; i++) {
+                                transicion.addEstadoInicio(first[i]);
+                            }
+                        } else {
+                            transicion.addEstadoInicio(first[0]);
+                        }
+                        char[] symbolArray = first[first.length - 1].toCharArray();
+                        simbolo = symbolArray[0];
                         transicion.setSimbolo(simbolo);
-                        //System.out.println(transicion);
+                        for (String estadoLlegada : second) {
+                            transicion.addEstadoLlegada(estadoLlegada);
+                        }
+                        transiciones.add(transicion);
+                        transicion.printTransition();
                         break;
                 }
-                
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Error: No se encontro el archivo " + ex.getMessage());
         }
+        calcularAutomataFinitoDeterministico();
+    }
+    
+    /**
+     * cacularAutomataFinitoNoDeterministico form the AFND with lambda transitions
+     * convert it to AFND with no lambda transitions
+     */
+    protected static void calcularAutomataFinitoNoDeterministico() {}
+    
+    /**
+     * calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
+     * convert it to AFD.
+     */
+    protected static void calcularAutomataFinitoDeterministico() {
+        
     }
     
 }
