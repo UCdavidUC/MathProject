@@ -94,19 +94,20 @@ public class MathProject {
         } catch (FileNotFoundException ex) {
             System.out.println("Error: No se encontro el archivo " + ex.getMessage());
         }
+        calcularAutomataFinitoDeterministico();
     }
     
     /**
      * cacularAutomataFinitoNoDeterministico form the AFND with lambda transitions
      * convert it to AFND with no lambda transitions
      */
-    protected void calcularAutomataFinitoNoDeterministico() {}
+    protected static void calcularAutomataFinitoNoDeterministico() {}
     
     /**
      * calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
      * convert it to AFD.
      */
-    protected void calcualrAutomataFinitoDeterministico() {
+    protected static void calcularAutomataFinitoDeterministico() {
         
     }
     
