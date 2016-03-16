@@ -23,6 +23,7 @@ public class MathProject {
     protected static List<Estado> estadosFinales = new ArrayList<>();
     protected static List<Transition> transiciones = new ArrayList<>();
     protected static char simbolo;
+    protected static int numeroDeEstado;
     
     public static void main(String[] args) throws IOException {
         Estado estado = new Estado();
@@ -73,21 +74,29 @@ public class MathProject {
                         String[] first = descriptor[0].split(",");
                         String[] second = descriptor[1].split(",");
                         Transition transicion = new Transition();
-                        if (first.length > 2) {
+                        // TODO reminder: For AFND-lambda, no initial states that 
+                        // are a combination of two other states will be write to
+                        // the initial states.
+                        /*if (first.length > 2) {
                             for (int i = 0; i < first.length - 1; i++) {
                                 transicion.addEstadoInicio(first[i]);
                             }
                         } else {
                             transicion.addEstadoInicio(first[0]);
-                        }
+                        }*/
+                        transicion.addEstadoInicio(first[0]);
                         char[] symbolArray = first[first.length - 1].toCharArray();
                         simbolo = symbolArray[0];
                         transicion.setSimbolo(simbolo);
                         for (String estadoLlegada : second) {
                             transicion.addEstadoLlegada(estadoLlegada);
                         }
+                        if (transicion.getEstadosLlegada().size() > 1) {
+                            createTransition(transicion, numeroDeEstado);
+                        }
                         transiciones.add(transicion);
                         transicion.printTransition();
+                        numeroDeEstado++;
                         break;
                 }
             }
@@ -109,6 +118,34 @@ public class MathProject {
      */
     protected static void calcularAutomataFinitoDeterministico() {
         
+    }
+    
+    protected static void createTransition(Transition transition, int numeroDeEstado) {
+        Transition nuevaTransicion = new Transition();
+        //StringBuilder sb = new StringBuilder();
+        numeroDeEstado++;
+        transition.getEstadosLlegada().stream().forEach((estadosLlegada) -> {
+            nuevaTransicion.addEstadoInicio(estadosLlegada.getEstado());
+        });
+        //nuevaTransicion.addEstadoInicio((sb.append(numeroDeEstado)).toString());
+        nuevaTransicion.setSimbolo(transition.getSimbolo());
+        List<Estado> estadosDeLlegada = transition.getEstadosLlegada();
+        for (int i = 0; i < transiciones.size(); i++) {
+            for (int j = 0; j < estadosDeLlegada.size(); j++) {
+                Estado estado = new Estado();
+                estado = transiciones.get(i).getEstadosInicio().get(0);
+                String temp1 = estado.getEstado();
+                String temp2 = estadosDeLlegada.get(j).getEstado();
+                System.out.println("Estado: " + temp1 + " de las transiciones contra " + temp2 + " de los estados de llegada");
+                if (temp1 == temp2) {
+                    nuevaTransicion.addEstadoLlegada(estado.getEstado());
+                    System.out.println("Estado " + estado.getEstado() + " añadido correctamente");
+                } else {
+                    System.out.println(temp1 + "==" + temp2);
+                }
+            }
+        }
+        nuevaTransicion.printTransition();
     }
     
 }

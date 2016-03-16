@@ -20,4 +20,7 @@ public class Estado {
         return estado;
     }
 
+    public void printEstado() {
+        System.out.println(estado);
+    }
 }
