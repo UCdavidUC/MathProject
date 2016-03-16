@@ -23,4 +23,8 @@ public class Simbolo {
         this.simbolo = simbolo;
     }
     
+    public void printSimbolo() {
+        System.out.println(simbolo);
+    }
+    
 }
