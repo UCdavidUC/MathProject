@@ -22,8 +22,9 @@ public class MathProject {
     protected static String estadoInicial;
     protected static List<Estado> estadosFinales = new ArrayList<>();
     protected static List<Transition> transiciones = new ArrayList<>();
-    protected static char simbolo;
-    protected static int numeroDeEstado;
+    protected static List<Transition> afd = new ArrayList<>();
+    protected static char simbolo = ' ';
+    protected static int numeroDeEstado = 0;
     
     public static void main(String[] args) throws IOException {
         Estado estado = new Estado();
@@ -91,19 +92,15 @@ public class MathProject {
                         for (String estadoLlegada : second) {
                             transicion.addEstadoLlegada(estadoLlegada);
                         }
-                        if (transicion.getEstadosLlegada().size() > 1) {
-                            createTransition(transicion, numeroDeEstado);
-                        }
                         transiciones.add(transicion);
                         transicion.printTransition();
-                        numeroDeEstado++;
                         break;
                 }
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Error: No se encontro el archivo " + ex.getMessage());
         }
-        calcularAutomataFinitoDeterministico();
+        calcularAutomataFinitoDeterministico(transiciones);
     }
     
     /**
@@ -115,8 +112,11 @@ public class MathProject {
     /**
      * calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
      * convert it to AFD.
+     * * @param transiciones, receives a transitions list from a non-deterministic automate
      */
-    protected static void calcularAutomataFinitoDeterministico() {
+    protected static void calcularAutomataFinitoDeterministico(List<Transition> transiciones) {
+        
+        
         
     }
     
