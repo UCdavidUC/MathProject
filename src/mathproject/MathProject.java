@@ -22,6 +22,7 @@ public class MathProject {
     protected static String estadoInicial;
     protected static List<Estado> estadosFinales = new ArrayList<>();
     protected static List<Transition> transiciones = new ArrayList<>();
+    protected static List<Transition> afnd = new ArrayList<>();
     protected static List<Transition> afd = new ArrayList<>();
     protected static char simbolo = ' ';
     protected static int numeroDeEstado = 0;
@@ -106,17 +107,27 @@ public class MathProject {
     /**
      * cacularAutomataFinitoNoDeterministico form the AFND with lambda transitions
      * convert it to AFND with no lambda transitions
+     * @param transiciones, list of transitions from the original lambda non deterministic automate
+     * @param simbolos
      */
-    protected static void calcularAutomataFinitoNoDeterministico() {}
+    protected static void calcularAutomataFinitoNoDeterministico(List<Transition> transiciones, List<Simbolo> simbolos) {
+        if (lambdaTransition(simbolos) == false) {
+            calcularAutomataFinitoDeterministico(transiciones);
+        } else {
+            // Local variables for new transitions generation
+            
+        }
+    }
     
     /**
-     * calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
+     * Method: calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
      * convert it to AFD.
-     * * @param transiciones, receives a transitions list from a non-deterministic automate
+     * @param transiciones, receives a transitions list from a non-deterministic automate
      */
     protected static void calcularAutomataFinitoDeterministico(List<Transition> transiciones) {
         
-        
+        for (Transition transicion : transiciones) {
+        }
         
     }
     
@@ -130,14 +141,14 @@ public class MathProject {
         //nuevaTransicion.addEstadoInicio((sb.append(numeroDeEstado)).toString());
         nuevaTransicion.setSimbolo(transition.getSimbolo());
         List<Estado> estadosDeLlegada = transition.getEstadosLlegada();
+        Estado estado = new Estado();
         for (int i = 0; i < transiciones.size(); i++) {
             for (int j = 0; j < estadosDeLlegada.size(); j++) {
-                Estado estado = new Estado();
                 estado = transiciones.get(i).getEstadosInicio().get(0);
                 String temp1 = estado.getEstado();
                 String temp2 = estadosDeLlegada.get(j).getEstado();
                 System.out.println("Estado: " + temp1 + " de las transiciones contra " + temp2 + " de los estados de llegada");
-                if (temp1 == temp2) {
+                if (temp1 == null ? temp2 == null : temp1.equals(temp2)) {
                     nuevaTransicion.addEstadoLlegada(estado.getEstado());
                     System.out.println("Estado " + estado.getEstado() + " añadido correctamente");
                 } else {
@@ -146,6 +157,21 @@ public class MathProject {
             }
         }
         nuevaTransicion.printTransition();
+    }
+        
+    /**
+    * Method: lambdaTransition determines based on the list of registered symbols if it is a lambda transitions automate.
+    * @param simbolos
+    * @return boolean isAfndl
+    */
+    protected static boolean lambdaTransition(List<Simbolo> simbolos) {
+        boolean isAfndl = false;
+        for (int i = 0; i < simbolos.size(); i++) {
+            if (simbolos.get(i).getSimbolo() == 'l' && isAfndl == false) {
+                isAfndl = true;
+            }
+        }
+        return isAfndl;
     }
     
 }
