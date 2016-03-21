@@ -51,10 +51,19 @@ public class Transition {
     }
     
     public void addEstadoLlegada(String estadoLlegada) {
-        Estado estado = new Estado();
-        estado.setEstado(estadoLlegada);
-        estadosLlegada.add(estado);
+        boolean newEstado = true;
+        for (int i = 0; i < estadosLlegada.size(); i++) {
+            if (estadosLlegada.get(i).getEstado().equals(estadoLlegada) && newEstado == true) {
+                newEstado = false;
+            }
+        }
+        if (newEstado == true) {
+            Estado estado = new Estado();
+            estado.setEstado(estadoLlegada);
+            estadosLlegada.add(estado);
+        }
     }
+    
     public void printTransition() {
         Estado estado = new Estado();
         for (int i = 0; i < estadosInicio.size(); i++) {
