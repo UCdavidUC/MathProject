@@ -218,15 +218,13 @@ public class MathProject {
      * Method: printAutomate, print automate table
      */
     protected static void printAutomate() {
-        System.out.println(estados.size());
-        System.out.println(simbolos.size());
-        System.out.println(transiciones.size());
+        String[][] tablaTransiciones = new String[simbolos.size()][estados.size()];
+        // Fill table
         for (int i = 0; i < estados.size(); i++) {
-            System.out.println("Here: " + estados.get(i).getEstado());
             for (int j = 0; j < simbolos.size(); j++) {
-                System.out.println("Here: " + j);
-                if (transiciones.get(i).getEstadosInicio().toString().equals(estados.get(i).toString()) && transiciones.get(i).getSimbolo() == simbolos.get(j).getSimbolo()) {
-                    System.out.print(transiciones.get(i).getEstadosInicio().toString() + " | " + simbolos.get(j).getSimbolo() + " | " + transiciones.get(i).getEstadosLlegada());
+                List<Estado> arrivals = transiciones.get(i*j).getEstadosLlegada();
+                for (int k = 0; k < arrivals.size(); k++) {
+                    System.out.print(transiciones.get(i*j).getEstadosLlegada().toString() + ", ");
                 }
             }
             System.out.println();
