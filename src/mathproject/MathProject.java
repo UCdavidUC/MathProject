@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,8 +50,8 @@ public class MathProject {
                         String[] listaSimbolos = line.split(",");
                         for (String listaSimbolo : listaSimbolos) {
                             char[] simbolosEnLista = listaSimbolo.toCharArray();
-                            Simbolo simbolo = new Simbolo(simbolosEnLista[0]);
-                            simbolos.add(simbolo);
+                            Simbolo symbol = new Simbolo(simbolosEnLista[0]);
+                            simbolos.add(symbol);
                         }
                         lineCount++;
                         break;
