@@ -11,13 +11,13 @@ import java.util.List;
 public class Automata extends Converter {
     private List<Estado> estados;
     private List<Simbolo> simbolos;
-    private List<Estado> estadoInicio;
+    private Estado estadoInicio;
     private List<Estado> estadosFinales;
     private List<Transition> transiciones;
     
     public Automata() { } ;
     
-    public Automata(List<Estado> estados, List<Simbolo> simbolos, List<Estado> estadoInicio, List<Estado> estadosFinales, List<Transition> transiciones) {
+    public Automata(List<Estado> estados, List<Simbolo> simbolos, Estado estadoInicio, List<Estado> estadosFinales, List<Transition> transiciones) {
         this.estados = estados;
         this.simbolos = simbolos;
         this.estadoInicio = estadoInicio;
@@ -41,11 +41,11 @@ public class Automata extends Converter {
         this.simbolos = simbolos;
     }
 
-    public List<Estado> getEstadoInicio() {
+    public Estado getEstadoInicio() {
         return estadoInicio;
     }
 
-    public void setEstadoInicio(List<Estado> estadoInicio) {
+    public void setEstadoInicio(Estado estadoInicio) {
         this.estadoInicio = estadoInicio;
     }
 
@@ -64,8 +64,5 @@ public class Automata extends Converter {
     public void setTransiciones(List<Transition> transiciones) {
         this.transiciones = transiciones;
     }
-    
-    
-    
     
 }
