@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -102,21 +101,28 @@ public class MathProject {
         } catch (FileNotFoundException ex) {
             System.out.println("Error: No se encontro el archivo " + ex.getMessage());
         }
-        
+        printAutomate("Autómata Finito No Determinístico con Transicion Lambda");
         calcularAutomataFinitoNoDeterministico(transiciones, simbolos);
     }
     
     /**
      * Method: cacularAutomataFinitoNoDeterministico form the AFND with lambda transitions
      * convert it to AFND with no lambda transitions
-     * @param transiciones, list of transitions from the original lambda non deterministic automate
-     * @param simbolos
+     * @param nfal, list of transitions from the original lambda non deterministic automate
      */
-    protected static void calcularAutomataFinitoNoDeterministico(List<Transition> transiciones, List<Simbolo> simbolos) {
+    protected static void calcularAutomataFinitoNoDeterministico(Automata nfal) {
         if (lambdaTransition(simbolos) == false) {
-            calcularAutomataFinitoDeterministico(transiciones);
+            calcularAutomataFinitoDeterministico(nfal);
         } else {
-            // Local variables for new transitions generation
+            // Calculate l-closure
+            List<Estado> estadosNFAL = nfal.getEstados();
+            List<Simbolo> simbolosNFAL = nfal.getSimbolos();
+            List<Transition> transicionesNFAL = nfal.getTransiciones();
+            for (int i = 0; i < estadosNFAL.size(); i++) {
+                for (int j = 0; j < simbolosNFAL.size(); j++) {
+                    
+                }
+            }
             printAutomate("Autómata Finito No Determinístico");
         }
         
@@ -127,7 +133,7 @@ public class MathProject {
      * convert it to AFD.
      * @param transiciones, receives a transitions list from a non-deterministic automate
      */
-    protected static void calcularAutomataFinitoDeterministico(List<Transition> transiciones) {
+    protected static void calcularAutomataFinitoDeterministico(Automata dfa) {
         // Calculo de la cerradura lambda.
         for (int i = 0; i < transiciones.size(); i++) {
             if (transiciones.get(i).getEstadosLlegada().size() > 1) {
@@ -260,7 +266,7 @@ public class MathProject {
             sb = new StringBuilder();
             sb.append("|");
             sb.append(simbolos.get(i).getSimbolo());
-            while (sb.length() < max + 1) {
+            while (sb.length() < max + 2) {
                 sb.append(' ');
             }
             System.out.print(sb.toString());
