@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -94,13 +95,14 @@ public class MathProject {
                             transicion.addEstadoLlegada(estadoLlegada);
                         }
                         transiciones.add(transicion);
+                        transicion.printTransition();
                         break;
                 }
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Error: No se encontro el archivo " + ex.getMessage());
         }
-        printAutomate();
+        
         calcularAutomataFinitoNoDeterministico(transiciones, simbolos);
     }
     
@@ -115,8 +117,9 @@ public class MathProject {
             calcularAutomataFinitoDeterministico(transiciones);
         } else {
             // Local variables for new transitions generation
-            
+            printAutomate("Autómata Finito No Determinístico");
         }
+        
     }
     
     /**
@@ -132,7 +135,7 @@ public class MathProject {
                 createTransition(transiciones.get(i));
             }
         }
-        
+        printAutomate("Autómata Finito Determinístico");
     }
     
     /**
@@ -196,6 +199,7 @@ public class MathProject {
     /**
      * Method: stateGetter
      * @param estados
+     * @param simbolo
      * @return arrivals
      */
     protected static List<Estado> stateGetter(List<Estado> estados, char simbolo) {
@@ -216,19 +220,71 @@ public class MathProject {
     
     /**
      * Method: printAutomate, print automate table
+     * @param title
      */
-    protected static void printAutomate() {
+    protected static void printAutomate(String title) {
         String[][] tablaTransiciones = new String[simbolos.size()][estados.size()];
+        System.out.println(title);
         // Fill table
+        int count = 0;
+        int max = 0;
         for (int i = 0; i < estados.size(); i++) {
             for (int j = 0; j < simbolos.size(); j++) {
-                List<Estado> arrivals = transiciones.get(i*j).getEstadosLlegada();
+                StringBuilder sb = new StringBuilder();
+                List<Estado> arrivals = transiciones.get(count).getEstadosLlegada();
+                sb.append('{');
                 for (int k = 0; k < arrivals.size(); k++) {
-                    System.out.print(transiciones.get(i*j).getEstadosLlegada().toString() + ", ");
+                    if (k == arrivals.size() - 1) {
+                        sb.append(arrivals.get(k).getEstado());
+                        sb.append('}');
+                    } else {
+                        sb.append(arrivals.get(k).getEstado());
+                        sb.append(',');
+                    }
+                    tablaTransiciones[j][i] = sb.toString();
+                    if (sb.length() > max) {
+                        max = sb.length();
+                    }
                 }
+                count++;
+            }
+        }
+        // Print header
+        StringBuilder sb = new StringBuilder();
+        sb.append("t");
+        while(sb.length() < max + 1) {
+            sb.append(' ');
+        }
+        System.out.print(sb.toString());
+        for (int i = 0; i < simbolos.size(); i++) {
+            sb = new StringBuilder();
+            sb.append("|");
+            sb.append(simbolos.get(i).getSimbolo());
+            while (sb.length() < max + 1) {
+                sb.append(' ');
+            }
+            System.out.print(sb.toString());
+        }
+        System.out.println();
+        for (int i = 0; i < estados.size(); i++) {
+            sb = new StringBuilder();
+            sb.append(estados.get(i).getEstado());
+            while (sb.length() < max + 1) {
+                sb.append(' ');
+            }
+            System.out.print(sb.toString());
+            for (int j = 0; j < simbolos.size(); j++) {
+                System.out.print('|');
+                sb = new StringBuilder();
+                sb.append(tablaTransiciones[j][i]);
+                while(sb.length() < max + 1) {
+                    sb.append(' ');
+                }
+                System.out.print(sb.toString());
             }
             System.out.println();
         }
+        
     }
     
 }
