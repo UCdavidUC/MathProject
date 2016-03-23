@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,11 +23,12 @@ public class MathProject {
     protected static String estadoInicial;
     protected static List<Estado> estadosFinales = new ArrayList<>();
     protected static List<Transition> transiciones = new ArrayList<>();
-    protected static char simbolo;
-    protected static int numeroDeEstado;
+    protected static List<Transition> afnd = new ArrayList<>();
+    protected static List<Transition> afd = new ArrayList<>();
+    protected static char simbolo = ' ';
+    protected static int numeroDeEstado = 0;
     
     public static void main(String[] args) throws IOException {
-        Estado estado = new Estado();
         String filename = "file.txt";
         lineCount = 0;
         try {
@@ -38,6 +40,7 @@ public class MathProject {
                     case 0:
                         String[] listaEstados = line.split(",");
                         for (String listaEstado : listaEstados) {
+                            Estado estado = new Estado();
                             estado.setEstado(listaEstado);
                             estados.add(estado);
                         }
@@ -91,61 +94,197 @@ public class MathProject {
                         for (String estadoLlegada : second) {
                             transicion.addEstadoLlegada(estadoLlegada);
                         }
-                        if (transicion.getEstadosLlegada().size() > 1) {
-                            createTransition(transicion, numeroDeEstado);
-                        }
                         transiciones.add(transicion);
                         transicion.printTransition();
-                        numeroDeEstado++;
                         break;
                 }
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Error: No se encontro el archivo " + ex.getMessage());
         }
-        calcularAutomataFinitoDeterministico();
+        
+        calcularAutomataFinitoNoDeterministico(transiciones, simbolos);
     }
     
     /**
-     * cacularAutomataFinitoNoDeterministico form the AFND with lambda transitions
+     * Method: cacularAutomataFinitoNoDeterministico form the AFND with lambda transitions
      * convert it to AFND with no lambda transitions
+     * @param transiciones, list of transitions from the original lambda non deterministic automate
+     * @param simbolos
      */
-    protected static void calcularAutomataFinitoNoDeterministico() {}
-    
-    /**
-     * calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
-     * convert it to AFD.
-     */
-    protected static void calcularAutomataFinitoDeterministico() {
+    protected static void calcularAutomataFinitoNoDeterministico(List<Transition> transiciones, List<Simbolo> simbolos) {
+        if (lambdaTransition(simbolos) == false) {
+            calcularAutomataFinitoDeterministico(transiciones);
+        } else {
+            // Local variables for new transitions generation
+            printAutomate("Autómata Finito No Determinístico");
+        }
         
     }
     
-    protected static void createTransition(Transition transition, int numeroDeEstado) {
-        Transition nuevaTransicion = new Transition();
-        //StringBuilder sb = new StringBuilder();
-        numeroDeEstado++;
-        transition.getEstadosLlegada().stream().forEach((estadosLlegada) -> {
-            nuevaTransicion.addEstadoInicio(estadosLlegada.getEstado());
-        });
-        //nuevaTransicion.addEstadoInicio((sb.append(numeroDeEstado)).toString());
-        nuevaTransicion.setSimbolo(transition.getSimbolo());
-        List<Estado> estadosDeLlegada = transition.getEstadosLlegada();
+    /**
+     * Method: calcularAtuomataFinitoDeterministico from the AFND with no lambda transition
+     * convert it to AFD.
+     * @param transiciones, receives a transitions list from a non-deterministic automate
+     */
+    protected static void calcularAutomataFinitoDeterministico(List<Transition> transiciones) {
+        // Calculo de la cerradura lambda.
         for (int i = 0; i < transiciones.size(); i++) {
-            for (int j = 0; j < estadosDeLlegada.size(); j++) {
-                Estado estado = new Estado();
-                estado = transiciones.get(i).getEstadosInicio().get(0);
-                String temp1 = estado.getEstado();
-                String temp2 = estadosDeLlegada.get(j).getEstado();
-                System.out.println("Estado: " + temp1 + " de las transiciones contra " + temp2 + " de los estados de llegada");
-                if (temp1 == temp2) {
-                    nuevaTransicion.addEstadoLlegada(estado.getEstado());
-                    System.out.println("Estado " + estado.getEstado() + " añadido correctamente");
-                } else {
-                    System.out.println(temp1 + "==" + temp2);
+            if (transiciones.get(i).getEstadosLlegada().size() > 1) {
+                System.out.println("Calculando afd");
+                createTransition(transiciones.get(i));
+            }
+        }
+        printAutomate("Autómata Finito Determinístico");
+    }
+    
+    /**
+     * Method: createTransition, this method creates new transitions based on the transition received
+     * @param transition
+     * @return added
+     */
+    protected static boolean createTransition(Transition transition) {
+        Transition nuevaTransicion = new Transition();
+        boolean added = false;
+        List<Estado> entradas = transition.getEstadosLlegada();
+        List<Estado> llegadas = new ArrayList<>();
+        // Creates new initial state with the arrivings of the transition received.
+        for (int i = 0; i < entradas.size(); i++) {
+            String entrada = entradas.get(i).getEstado();
+            nuevaTransicion.addEstadoInicio(entrada);
+        }
+        // Applies the algorithm for arriving states from a set of initial states.
+        if (stateExists(entradas) == true) {
+            
+        }
+        transiciones.add(nuevaTransicion);
+        return added;
+    }
+        
+    /**
+    * Method: lambdaTransition determines based on the list of registered symbols if it is a lambda transitions automate.
+    * @param simbolos
+    * @return isAfndl
+    */
+    protected static boolean lambdaTransition(List<Simbolo> simbolos) {
+        boolean isAfndl = false;
+        for (int i = 0; i < simbolos.size(); i++) {
+            if (simbolos.get(i).getSimbolo() == 'l' && isAfndl == false) {
+                isAfndl = true;
+                System.out.println("Es afnd lambda " + simbolos.get(i).getSimbolo());
+            }
+        }
+        return isAfndl;
+    }
+    
+    /**
+     * Method: exists, tells if a state is already defined, if it is then it will overwrite or skip it
+     * @param estados
+     * @return exists
+     */
+    protected static boolean stateExists(List<Estado> estados) {
+        boolean exists = false;
+        if (estados.size() > 0) {
+            for (int j = 0; j < transiciones.size(); j++) {
+                if (estados.toArray() == transiciones.get(j).getEstadosInicio().toArray()) {
+                    exists = true;
+                    System.out.println("El estado existe!");
+                    return exists;
                 }
             }
         }
-        nuevaTransicion.printTransition();
+        return exists;
+    }
+    
+    /**
+     * Method: stateGetter
+     * @param estados
+     * @param simbolo
+     * @return arrivals
+     */
+    protected static List<Estado> stateGetter(List<Estado> estados, char simbolo) {
+        List<Estado> arrivals = new ArrayList<>();
+        for (int i = 0; i < estados.size(); i++) {
+            for (int j = 0; j < transiciones.size(); j++) {
+                List<Estado> inicio = transiciones.get(j).getEstadosInicio();
+                char symbol = transiciones.get(j).getSimbolo();
+                for (int k = 0; k < inicio.size(); k++){
+                    if (estados.get(i) == inicio.get(k) && simbolo == symbol) {
+                        
+                    }
+                }
+            }
+        }
+        return arrivals;
+    }
+    
+    /**
+     * Method: printAutomate, print automate table
+     * @param title
+     */
+    protected static void printAutomate(String title) {
+        String[][] tablaTransiciones = new String[simbolos.size()][estados.size()];
+        System.out.println(title);
+        // Fill table
+        int count = 0;
+        int max = 0;
+        for (int i = 0; i < estados.size(); i++) {
+            for (int j = 0; j < simbolos.size(); j++) {
+                StringBuilder sb = new StringBuilder();
+                List<Estado> arrivals = transiciones.get(count).getEstadosLlegada();
+                sb.append('{');
+                for (int k = 0; k < arrivals.size(); k++) {
+                    if (k == arrivals.size() - 1) {
+                        sb.append(arrivals.get(k).getEstado());
+                        sb.append('}');
+                    } else {
+                        sb.append(arrivals.get(k).getEstado());
+                        sb.append(',');
+                    }
+                    tablaTransiciones[j][i] = sb.toString();
+                    if (sb.length() > max) {
+                        max = sb.length();
+                    }
+                }
+                count++;
+            }
+        }
+        // Print header
+        StringBuilder sb = new StringBuilder();
+        sb.append("t");
+        while(sb.length() < max + 1) {
+            sb.append(' ');
+        }
+        System.out.print(sb.toString());
+        for (int i = 0; i < simbolos.size(); i++) {
+            sb = new StringBuilder();
+            sb.append("|");
+            sb.append(simbolos.get(i).getSimbolo());
+            while (sb.length() < max + 1) {
+                sb.append(' ');
+            }
+            System.out.print(sb.toString());
+        }
+        System.out.println();
+        for (int i = 0; i < estados.size(); i++) {
+            sb = new StringBuilder();
+            sb.append(estados.get(i).getEstado());
+            while (sb.length() < max + 1) {
+                sb.append(' ');
+            }
+            System.out.print(sb.toString());
+            for (int j = 0; j < simbolos.size(); j++) {
+                System.out.print('|');
+                sb = new StringBuilder();
+                sb.append(tablaTransiciones[j][i]);
+                while(sb.length() < max + 1) {
+                    sb.append(' ');
+                }
+                System.out.print(sb.toString());
+            }
+            System.out.println();
+        }
+        
     }
     
 }
