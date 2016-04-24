@@ -104,8 +104,8 @@ public class MathProject {
         Estado inicial = new Estado();
         inicial.setEstado(estadoInicial);
         System.out.println(inicial.getEstado());
-        Automata nfa = new Automata(estados, simbolos, inicial, estadosFinales, transiciones);
-        calcularAutomataFinitoNoDeterministico(nfa);
+        Automata nfal = new Automata(estados, simbolos, inicial, estadosFinales, transiciones);
+        nfal.execute();
     }
     
     /**
@@ -118,7 +118,6 @@ public class MathProject {
             calcularAutomataFinitoDeterministico(nfal);
         } else {
             // Local variables for new transitions generation
-            printAutomate("Autómata Finito No Determinístico");
         }
         
     }
@@ -136,7 +135,6 @@ public class MathProject {
                 createTransition(transiciones.get(i));
             }
         }
-        printAutomate("Autómata Finito Determinístico");
     }
     
     /**
@@ -217,75 +215,6 @@ public class MathProject {
             }
         }
         return arrivals;
-    }
-    
-    /**
-     * Method: printAutomate, print automate table
-     * @param title
-     */
-    protected static void printAutomate(String title) {
-        String[][] tablaTransiciones = new String[simbolos.size()][estados.size()];
-        System.out.println(title);
-        // Fill table
-        int count = 0;
-        int max = 0;
-        for (int i = 0; i < estados.size(); i++) {
-            for (int j = 0; j < simbolos.size(); j++) {
-                StringBuilder sb = new StringBuilder();
-                List<Estado> arrivals = transiciones.get(count).getEstadosLlegada();
-                sb.append('{');
-                for (int k = 0; k < arrivals.size(); k++) {
-                    if (k == arrivals.size() - 1) {
-                        sb.append(arrivals.get(k).getEstado());
-                        sb.append('}');
-                    } else {
-                        sb.append(arrivals.get(k).getEstado());
-                        sb.append(',');
-                    }
-                    tablaTransiciones[j][i] = sb.toString();
-                    if (sb.length() > max) {
-                        max = sb.length();
-                    }
-                }
-                count++;
-            }
-        }
-        // Print header
-        StringBuilder sb = new StringBuilder();
-        sb.append("t");
-        while(sb.length() < max + 1) {
-            sb.append(' ');
-        }
-        System.out.print(sb.toString());
-        for (int i = 0; i < simbolos.size(); i++) {
-            sb = new StringBuilder();
-            sb.append("|");
-            sb.append(simbolos.get(i).getSimbolo());
-            while (sb.length() < max + 2) {
-                sb.append(' ');
-            }
-            System.out.print(sb.toString());
-        }
-        System.out.println();
-        for (int i = 0; i < estados.size(); i++) {
-            sb = new StringBuilder();
-            sb.append(estados.get(i).getEstado());
-            while (sb.length() < max + 1) {
-                sb.append(' ');
-            }
-            System.out.print(sb.toString());
-            for (int j = 0; j < simbolos.size(); j++) {
-                System.out.print('|');
-                sb = new StringBuilder();
-                sb.append(tablaTransiciones[j][i]);
-                while(sb.length() < max + 1) {
-                    sb.append(' ');
-                }
-                System.out.print(sb.toString());
-            }
-            System.out.println();
-        }
-        
     }
     
 }
