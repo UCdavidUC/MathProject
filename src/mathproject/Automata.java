@@ -15,8 +15,6 @@ public class Automata extends Converter {
     private Estado estadoInicio;
     private List<Estado> estadosFinales;
     private List<Transition> transiciones;
-    private List<Estado> temp = new ArrayList<>();
-    protected List<String> strings = new ArrayList<>();
     
     public Automata() { } ;
     
@@ -109,14 +107,11 @@ public class Automata extends Converter {
         
         if (symbols.contains("l") == true) {
             System.out.println("El automata es de tipo no determinístico con transiciones lambda");
-            //printAutomate("Automata Finito No Deterministico con Transiciones lambda");
+            printAutomate("NFA-l");
             Automata nfa = calculateNFA();
             nfa.getEstadosFinales();
-            //printAutomate("Automata Finito No Deterministico");
             Automata dfa = nfa.calculateDFA();
-            //printAutomate("Automata Finito Deterministico");
             Automata min = dfa.calculateMinimized();
-            //printAutomate("Automata Finito Minimizado");
         } else {
             if (isDFA() == false) {
                 //printAutomate("Automata Finito No Deterministico");
@@ -168,11 +163,13 @@ public class Automata extends Converter {
                 List<Estado> e = transiciones.get(i).getEstadosInicio();
                 for (int j = 0; j < e.size(); j++) {
                     t.setSimbolo(transiciones.get(i).getSimbolo());
-                    System.out.println("Calculate l-closure");
-                    lclosure(transiciones.get(i));
+                    t.setEstadosLlegada(lclosure(transiciones.get(i)));
+                    transitions.add(t);
                 }
             }
         }
+        nfa.setTransiciones(transitions);
+        nfa.printAutomate("NFA");
         return nfa;
     }
     
@@ -263,32 +260,52 @@ public class Automata extends Converter {
         
     }
     
+    
     public List<Estado> lclosure(Transition transicion) {
-        // Recorre las transiciones y agrega dependiendo de d(qi, l)     
+        List<Estado> temp = new ArrayList<>();
+        List<String> strings = new ArrayList<>();
+        for (int i = 0; i < transicion.getEstadosLlegada().size(); i++) {
+            Estado state = new Estado();
+            state.setEstado(transicion.getEstadosLlegada().get(i).getEstado());
+            strings.add(transicion.getEstadosLlegada().get(i).getEstado());
+            temp.add(state);
+        }
         
-        
+        // Recorre las transiciones y agrega dependiendo de d(qi, l)
         for (int i = 0; i < transiciones.size(); i++) {
-            List<Estado> initials = transiciones.get(i).getEstadosInicio();
             char s = transiciones.get(i).getSimbolo();
-            for (int j = 0; j < initials.size(); j++) {
-                String current = initials.get(j).getEstado();
-                for (int k = 0; k < transicion.getEstadosInicio().size(); k++) {
-                    String temporal = transicion.getEstadosInicio().get(k).getEstado();
-                    if (temporal.equals(current) && transicion.getSimbolo() == s) {
-                        Estado estado = new Estado();
-                        if (strings.contains(current) != true) {
-                            System.out.println("Agregó " + current);
-                            estado.setEstado(current);
-                            strings.add(current);
-                            temp.add(estado);
-                            //lclosure(transicion);
+            if (s == 'l') {
+                List<Estado> initials = transiciones.get(i).getEstadosInicio();
+                for (int j = 0; j < initials.size(); j++) {
+                    String current = initials.get(j).getEstado();
+                    for (int k = 0; k < transicion.getEstadosInicio().size(); k++) {
+                        String temporal = transicion.getEstadosInicio().get(k).getEstado();
+                        if (temporal.equals(current) == true && temporal.equals("0") == false) {
+                            List<Estado> llegadas = transiciones.get(i).getEstadosLlegada();
+                            for (int l = 0; l < llegadas.size(); l++) {
+                                if (llegadas.get(l).getEstado() == "0") {
+                                    strings.remove(l);
+                                    temp.remove(l);
+                                }
+                            }
+                            Estado estado = new Estado();
+                            if (strings.contains(current) != true) {
+                                System.out.println("Temporal: " + temporal + ", current: " + current);
+                                estado.setEstado(current);
+                                strings.add(current);
+                                temp.add(estado);
+                            }
                         }
                     }
                 }
             }
         }
-        System.out.print(strings.toString());
+        System.out.println(strings.toString());
         return temp;
-    }
+    }   
+    
+    
+    
+    
     
 }
